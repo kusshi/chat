@@ -14,7 +14,7 @@ set :environment, :production
 set :server, 'thin'
 set :sockets, []
 
-use Rack::Session::Cookie, key: 'rack.session'
+use Rack::Session::Cookie, key: 'rack.session', expire_after: 1.hours
 # enable :sessions
 # set :session_secret, "My session secret"
 # set :root, File.dirname(__FILE__)
