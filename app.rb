@@ -6,6 +6,7 @@ require 'sinatra/reloader' if development?
 require 'sinatra-websocket'
 require 'json'
 require 'date'
+require 'securerandom'
 
 require_relative 'model/user'
 
@@ -32,9 +33,13 @@ class ChatRoom
   @room_url
   @room_name
 
-  def initialize(room_url, room_name)
-    @room_url = room_irl
+  def initialize(room_name)
+    @room_url = self.create_random_string
     @room_name = room_name
+  end
+
+  def create_random_string
+    SecureRandom.urlsafe_base64
   end
 end
 
