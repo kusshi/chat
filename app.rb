@@ -28,6 +28,20 @@ Mongoid.configure do |config|
   config.log_level = :warn
 end
 
+class ChatRoom
+  @room_url
+  @room_name
+
+  def initialize(room_url, room_name)
+    @room_url = room_irl
+    @room_name = room_name
+  end
+
+
+end
+
+
+
 get '/' do
   redirect '/login'
 end
