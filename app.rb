@@ -34,7 +34,7 @@ class ChatRoom
   @room_name
 
   def initialize(room_name)
-    @room_url = self.create_random_string
+    @room_url = create_random_string
     @room_name = room_name
   end
 
@@ -78,6 +78,10 @@ post '/user_registration' do
   else
     redirect '/registration'
   end
+end
+
+get '/room_select' do
+  erb :room_select
 end
 
 post '/create_chatroom' do
