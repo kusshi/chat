@@ -38,7 +38,7 @@ class ChatRoom
     @room_name = room_name
   end
 
-  def create_random_string
+  def self.create_random_string
     SecureRandom.urlsafe_base64
   end
 end
