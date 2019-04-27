@@ -36,11 +36,7 @@ class ChatRoom
     @room_url = room_irl
     @room_name = room_name
   end
-
-
 end
-
-
 
 get '/' do
   redirect '/login'
@@ -77,6 +73,10 @@ post '/user_registration' do
   else
     redirect '/registration'
   end
+end
+
+post '/create_chatroom' do
+  p 'create_chatroom'
 end
 
 get '/chat' do
