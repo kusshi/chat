@@ -14,6 +14,7 @@ set :environment, :production
 
 set :server, 'thin'
 set :sockets, []
+set :chat_rooms, []
 
 use Rack::Session::Cookie, key: 'rack.session', expire_after: 1.hours
 # enable :sessions
@@ -33,14 +34,17 @@ class ChatRoom
   @room_url
   @room_name
 
-  def initialize(room_name)
-    @room_url = create_random_string
-    @room_name = room_name
-  end
-
   def self.create_random_string
     SecureRandom.urlsafe_base64
   end
+
+  def initialize(room_name)
+    @room_url = ChatRoom.create_random_string
+    @room_name = room_name
+  end
+
+  attr_reader :room_name
+  attr_reader :room_url
 end
 
 get '/' do
@@ -86,7 +90,14 @@ end
 
 post '/create_chatroom' do
   p 'create_chatroom'
-  params[:name]
+
+  chat_room = ChatRoom.new(params[:name])
+  settings.chat_rooms << chat_room
+  # params[:name]
+  p chat_room.room_name
+  p chat_room.room_url
+  p settings.chat_rooms.length
+  chat_room.room_url
 end
 
 get '/chat' do
