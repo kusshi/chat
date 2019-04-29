@@ -10,9 +10,9 @@
 
 <body>
 	<div class="container">
-		<form action="create_chatroom" method="POST" id="form">
+		<form id="form">
 			<div>
-				<input type="text" name="chatroom_name" value="room name">
+				<input type="text" id="chatroom_name" value="room name">
 			</div>
 
 			<div>
@@ -20,6 +20,8 @@
 			</div>
 
 		</form>
+		<div id="rooms">
+		</div>
 
 	</div>
 	<script src="/room_create.js" type="text/javascript"></script>
