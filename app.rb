@@ -86,6 +86,7 @@ end
 
 post '/create_chatroom' do
   p 'create_chatroom'
+  params[:name]
 end
 
 get '/chat' do
