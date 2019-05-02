@@ -94,13 +94,15 @@ post '/create_chatroom' do
   p 'create_chatroom'
 
   chat_room = ChatRoom.new(params[:name])
-  settings.chat_rooms{chat_room.room_url} = chat_room
+  settings.chat_rooms[chat_room.room_url] = chat_room
   # params[:name]
   p chat_room.room_name
   p chat_room.room_url
   p settings.chat_rooms.length
   chat_room.room_url
 end
+
+
 
 get '/chat' do
   p session[:user_id]
