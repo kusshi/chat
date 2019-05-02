@@ -63,7 +63,7 @@ post '/user_authentication' do
   user = User.authenticate(params[:name], params[:password])
   if user
     session[:user_id] = user._id
-    redirect '/chat'
+    erb :room_select
   else
     redirect '/login'
   end
@@ -86,9 +86,9 @@ post '/user_registration' do
   end
 end
 
-get '/room_select' do
-  erb :room_select
-end
+# get '/room_select' do
+#   erb :room_select
+# end
 
 post '/create_chatroom' do
   p 'create_chatroom'
