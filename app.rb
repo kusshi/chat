@@ -33,7 +33,7 @@ end
 class ChatRoom
   @room_url
   @room_name
-  @room_members = {}
+  @room_members
 
   def self.create_random_string
     SecureRandom.urlsafe_base64
@@ -42,11 +42,12 @@ class ChatRoom
   def initialize(room_name)
     @room_url = ChatRoom.create_random_string
     @room_name = room_name
+    @room_members = {}
   end
 
   attr_reader :room_name
   attr_reader :room_url
-  attr_reader :room_members
+  attr_accessor :room_members
 end
 
 get '/' do
@@ -102,16 +103,17 @@ post '/create_chatroom' do
   chat_room.room_url
 end
 
-get '/chat/:room_name' do
-  p params[:room_name]
+get '/chat/:room_url' do
+  p params[:room_url]
   p session[:user_id]
   @user = User.where(_id: session[:user_id]).first
   if @user
     session[:user_name] = @user[:name]
     p @user[:name]
     p session[:user_name]
-    if settings.chat_rooms.key?(params[:room_name])
+    if settings.chat_rooms.key?(params[:room_url])
       p 'exist'
+      session[:room_url] = params[:room_url]
       erb :chat
     else
       p 'not exist'
@@ -135,10 +137,10 @@ get '/websocket' do
         login_user_name = {}
         login_user_name[:login_user_name] = session[:user_name]
         ws.send(login_user_name.to_json)
-        settings.sockets << ws
+        settings.chat_rooms[session[:room_url]].room_members[session[:user_id]] = ws
       end
       ws.onmessage do |msg|
-        settings.sockets.each do |s|
+        settings.chat_rooms[session[:room_url]].room_members.each_value do |s|
           result = JSON.parse(msg)
           result[:user_name] = session[:user_name]
           s.send(result.to_json)
