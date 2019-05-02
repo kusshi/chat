@@ -33,6 +33,7 @@ end
 class ChatRoom
   @room_url
   @room_name
+  @room_members = {}
 
   def self.create_random_string
     SecureRandom.urlsafe_base64
@@ -45,6 +46,7 @@ class ChatRoom
 
   attr_reader :room_name
   attr_reader :room_url
+  attr_reader :room_members
 end
 
 get '/' do
