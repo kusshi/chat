@@ -14,7 +14,7 @@ set :environment, :production
 
 set :server, 'thin'
 set :sockets, []
-set :chat_rooms, []
+set :chat_rooms, {}
 
 use Rack::Session::Cookie, key: 'rack.session', expire_after: 1.hours
 # enable :sessions
@@ -94,7 +94,7 @@ post '/create_chatroom' do
   p 'create_chatroom'
 
   chat_room = ChatRoom.new(params[:name])
-  settings.chat_rooms << chat_room
+  settings.chat_rooms{chat_room.room_url} = chat_room
   # params[:name]
   p chat_room.room_name
   p chat_room.room_url
