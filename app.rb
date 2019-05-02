@@ -104,24 +104,19 @@ end
 
 get '/chat/:room_name' do
   p params[:room_name]
-  if settings.chat_rooms.key?(params[:room_name])
-    p 'exist'
-    erb :chat
-  else
-    p 'not exist'
-    redirect `/login`
-  end
-end
-
-get '/chat' do
   p session[:user_id]
   @user = User.where(_id: session[:user_id]).first
   if @user
     session[:user_name] = @user[:name]
     p @user[:name]
     p session[:user_name]
-    # session[:user_name] = user
-    erb :chat
+    if settings.chat_rooms.key?(params[:room_name])
+      p 'exist'
+      erb :chat
+    else
+      p 'not exist'
+      redirect `/login`
+    end
   else
     redirect `/login`
   end
