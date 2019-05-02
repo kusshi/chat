@@ -102,7 +102,16 @@ post '/create_chatroom' do
   chat_room.room_url
 end
 
-
+get '/chat/:room_name' do
+  p params[:room_name]
+  if settings.chat_rooms.key?(params[:room_name])
+    p 'exist'
+    erb :chat
+  else
+    p 'not exist'
+    redirect `/login`
+  end
+end
 
 get '/chat' do
   p session[:user_id]
