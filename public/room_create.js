@@ -14,8 +14,12 @@ window.addEventListener('load', () => {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
                     let li = document.createElement('li');
+                    let link_chatroom = document.createElement('a');
+                    let text = document.createTextNode(xhr.responseText);
+                    link_chatroom.href = location.origin + '/chat/' + xhr.responseText;
+                    link_chatroom.appendChild(text);
+                    li.appendChild(link_chatroom);
                     li.classList.add("list-group-item")
-                    li.textContent = xhr.responseText;
                     chatrooms.insertBefore(li, chatrooms.firstChild);
                 } else {
                     console.log('error.')
