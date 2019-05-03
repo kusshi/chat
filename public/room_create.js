@@ -1,6 +1,7 @@
 window.addEventListener('load', () => {
     let form = document.getElementById('form');
     let chatroom_name = document.getElementById('chatroom_name');
+    let chatrooms = document.getElementById('chatrooms');
 
     form.addEventListener('submit', e => {
         console.log('submit.');
@@ -12,12 +13,15 @@ window.addEventListener('load', () => {
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
-                    rooms.textContent = xhr.responseText;
+                    let li = document.createElement('li');
+                    li.classList.add("list-group-item")
+                    li.textContent = xhr.responseText;
+                    chatrooms.insertBefore(li, chatrooms.firstChild);
                 } else {
-                    rooms.textContent = 'error.'
+                    console.log('error.')
                 }
             } else {
-                rooms.textContent = 'loading'
+                console.log('loading.')
             }
         };
 
