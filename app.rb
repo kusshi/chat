@@ -95,6 +95,25 @@ get '/room_select' do
   end
 end
 
+post '/list_chatrooms' do
+  if session[:user_id].nil?
+    redirect '/login'
+  else
+    list_chatrooms = {}
+    list_chatrooms[:chat_rooms] = []
+    settings.chat_rooms.each_value do |value|
+      p value
+      tmp_hash = { room_url: value.room_url, room_name: value.room_name }
+      list_chatrooms[:chat_rooms] << tmp_hash
+      # list_chatrooms[:chat_rooms] = value.room_url
+      # list_chatrooms[:room_name] = value.room_name
+    end
+    # p list_chatrooms
+    content_type :json
+    JSON.generate(list_chatrooms)
+  end
+end
+
 post '/create_chatroom' do
   p 'create_chatroom'
 
