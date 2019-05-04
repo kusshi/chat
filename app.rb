@@ -55,7 +55,7 @@ get '/' do
 end
 
 get '/login' do
-  p session[:user_id]
+  # p session[:user_id]
   erb :login
 end
 
@@ -64,7 +64,7 @@ post '/user_authentication' do
   user = User.authenticate(params[:name], params[:password])
   if user
     session[:user_id] = user._id
-    erb :room_select
+    redirect '/room_select'
   else
     redirect '/login'
   end
@@ -87,9 +87,13 @@ post '/user_registration' do
   end
 end
 
-# get '/room_select' do
-#   erb :room_select
-# end
+get '/room_select' do
+  if session[:user_id].nil?
+    redirect '/login'
+  else
+    erb :room_select
+  end
+end
 
 post '/create_chatroom' do
   p 'create_chatroom'
