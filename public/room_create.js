@@ -46,10 +46,11 @@ window.addEventListener('load', () => {
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
+                    let json_received = JSON.parse(xhr.responseText);
                     let li = document.createElement('li');
                     let link_chatroom = document.createElement('a');
-                    let text = document.createTextNode(xhr.responseText);
-                    link_chatroom.href = location.origin + '/chat/' + xhr.responseText;
+                    let text = document.createTextNode(json_received["chat_room"][0].room_name);
+                    link_chatroom.href = location.origin + '/chat/' + json_received["chat_room"][0].room_url;
                     link_chatroom.appendChild(text);
                     li.appendChild(link_chatroom);
                     li.classList.add("list-group-item")

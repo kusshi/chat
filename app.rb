@@ -123,7 +123,13 @@ post '/create_chatroom' do
   p chat_room.room_name
   p chat_room.room_url
   p settings.chat_rooms.length
-  chat_room.room_url
+
+  created_chatroom = {}
+  created_chatroom[:chat_room] = []
+  tmp_hash = { room_url: chat_room.room_url, room_name: chat_room.room_name }
+  created_chatroom[:chat_room] << tmp_hash
+  content_type :json
+  JSON.generate(created_chatroom) 
 end
 
 get '/chat/:room_url' do
