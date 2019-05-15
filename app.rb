@@ -132,6 +132,11 @@ post '/create_chatroom' do
   JSON.generate(created_chatroom)
 end
 
+post '/remove_chatrooms' do
+  p 'remove_chatrooms'
+  settings.chat_rooms.clear
+end
+
 get '/chat/:room_url' do
   p params[:room_url]
   p session[:user_id]

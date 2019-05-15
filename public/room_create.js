@@ -2,6 +2,29 @@ window.addEventListener('load', () => {
     let form = document.getElementById('form');
     let chatroom_name = document.getElementById('chatroom_name');
     let chatrooms = document.getElementById('chatrooms');
+    let remove_room_button = document.getElementById('remove_room_button');
+
+    remove_room_button.addEventListener('click', e => {
+        let xhr_remove_chatrooms = new XMLHttpRequest();
+        xhr_remove_chatrooms.onreadystatechange = function () {
+            if (xhr_remove_chatrooms.readyState === 4) {
+                if (xhr_remove_chatrooms.status === 200) {
+                    while (chatrooms.firstChild) {
+                        chatrooms.removeChild(chatrooms.firstChild);
+                    }
+                } else {
+                    console.log('error.')
+                }
+            } else {
+                console.log('loading.')
+            }
+        };
+
+        xhr_remove_chatrooms.open('post', '/remove_chatrooms', true);
+        xhr_remove_chatrooms.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+        xhr_remove_chatrooms.send(null);
+
+    });
 
 
     let xhr_first_load = new XMLHttpRequest();
