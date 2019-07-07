@@ -6,6 +6,7 @@ require 'sinatra/reloader' if development?
 require 'sinatra-websocket'
 require 'json'
 require 'date'
+require 'securerandom'
 
 require_relative 'model/user'
 
@@ -13,6 +14,7 @@ set :environment, :production
 
 set :server, 'thin'
 set :sockets, []
+set :chat_rooms, {}
 
 use Rack::Session::Cookie, key: 'rack.session', expire_after: 1.hours
 # enable :sessions
@@ -28,12 +30,33 @@ Mongoid.configure do |config|
   config.log_level = :warn
 end
 
+class ChatRoom
+  @room_url
+  @room_name
+  @room_members
+
+  def self.create_random_string
+    SecureRandom.urlsafe_base64
+  end
+
+  def initialize(room_name)
+    @room_url = ChatRoom.create_random_string
+    @room_name = room_name
+    @room_members = {}
+  end
+
+  attr_reader :room_name
+  attr_reader :room_url
+  attr_accessor :room_members
+end
+
 get '/' do
   redirect '/login'
 end
 
 get '/login' do
-  p session[:user_id]
+  # p session[:user_id]
+  @title = "チャット（仮）ログイン"
   erb :login
 end
 
@@ -42,7 +65,7 @@ post '/user_authentication' do
   user = User.authenticate(params[:name], params[:password])
   if user
     session[:user_id] = user._id
-    redirect '/chat'
+    redirect '/room_select'
   else
     redirect '/login'
   end
@@ -50,6 +73,7 @@ end
 
 get '/registration' do
   # session[:user_id] ||= nil
+  @title = "チャット（仮）ユーザ登録"
   erb :registration
 end
 
@@ -65,15 +89,74 @@ post '/user_registration' do
   end
 end
 
-get '/chat' do
+get '/room_select' do
+  if session[:user_id].nil?
+    redirect '/login'
+  else
+    @title = "チャット（仮）チャットルーム作成・選択"
+    erb :room_select
+  end
+end
+
+post '/list_chatrooms' do
+  if session[:user_id].nil?
+    redirect '/login'
+  else
+    list_chatrooms = {}
+    list_chatrooms[:chat_rooms] = []
+    settings.chat_rooms.each_value do |value|
+      p value
+      tmp_hash = { room_url: value.room_url, room_name: value.room_name }
+      list_chatrooms[:chat_rooms] << tmp_hash
+      # list_chatrooms[:chat_rooms] = value.room_url
+      # list_chatrooms[:room_name] = value.room_name
+    end
+    # p list_chatrooms
+    content_type :json
+    JSON.generate(list_chatrooms)
+  end
+end
+
+post '/create_chatroom' do
+  p 'create_chatroom'
+
+  chat_room = ChatRoom.new(params[:name])
+  settings.chat_rooms[chat_room.room_url] = chat_room
+  # params[:name]
+  p chat_room.room_name
+  p chat_room.room_url
+  p settings.chat_rooms.length
+
+  created_chatroom = {}
+  created_chatroom[:chat_room] = []
+  tmp_hash = { room_url: chat_room.room_url, room_name: chat_room.room_name }
+  created_chatroom[:chat_room] << tmp_hash
+  content_type :json
+  JSON.generate(created_chatroom)
+end
+
+post '/remove_chatrooms' do
+  p 'remove_chatrooms'
+  settings.chat_rooms.clear
+end
+
+get '/chat/:room_url' do
+  p params[:room_url]
   p session[:user_id]
   @user = User.where(_id: session[:user_id]).first
   if @user
     session[:user_name] = @user[:name]
     p @user[:name]
     p session[:user_name]
-    # session[:user_name] = user
-    erb :chat
+    if settings.chat_rooms.key?(params[:room_url])
+      p 'exist'
+      session[:room_url] = params[:room_url]
+      @title = "チャット（仮）"
+      erb :chat
+    else
+      p 'not exist'
+      redirect `/login`
+    end
   else
     redirect `/login`
   end
@@ -92,10 +175,10 @@ get '/websocket' do
         login_user_name = {}
         login_user_name[:login_user_name] = session[:user_name]
         ws.send(login_user_name.to_json)
-        settings.sockets << ws
+        settings.chat_rooms[session[:room_url]].room_members[session[:user_id]] = ws
       end
       ws.onmessage do |msg|
-        settings.sockets.each do |s|
+        settings.chat_rooms[session[:room_url]].room_members.each_value do |s|
           result = JSON.parse(msg)
           result[:user_name] = session[:user_name]
           s.send(result.to_json)
