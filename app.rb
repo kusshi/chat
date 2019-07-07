@@ -56,6 +56,7 @@ end
 
 get '/login' do
   # p session[:user_id]
+  @title = "チャット（仮）ログイン"
   erb :login
 end
 
@@ -72,6 +73,7 @@ end
 
 get '/registration' do
   # session[:user_id] ||= nil
+  @title = "チャット（仮）ユーザ登録"
   erb :registration
 end
 
@@ -91,6 +93,7 @@ get '/room_select' do
   if session[:user_id].nil?
     redirect '/login'
   else
+    @title = "チャット（仮）チャットルーム作成・選択"
     erb :room_select
   end
 end
@@ -148,6 +151,7 @@ get '/chat/:room_url' do
     if settings.chat_rooms.key?(params[:room_url])
       p 'exist'
       session[:room_url] = params[:room_url]
+      @title = "チャット（仮）"
       erb :chat
     else
       p 'not exist'
